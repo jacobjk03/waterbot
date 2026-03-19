@@ -14,7 +14,7 @@ from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 
-# Load .env from project root (waterbot/.env) where OPENAI_API_KEY, DATABASE_URL, etc. live
+# Load .env from project root (waterbot/.env) where OPENAI_API_KEY (embeddings), DATABASE_URL, etc. live
 _project_root = os.path.dirname(_application_dir)
 load_dotenv(os.path.join(_project_root, ".env"))
 
@@ -94,7 +94,7 @@ def main():
     print("🚀 Starting RAG loader...")
     print(f"Working directory: {os.getcwd()}")
     print("Backend: pgvector")
-    print(f"OPENAI_API_KEY: {'SET' if os.getenv('OPENAI_API_KEY') else 'NOT SET'}")
+    print(f"OPENAI_API_KEY (embeddings): {'SET' if os.getenv('OPENAI_API_KEY') else 'NOT SET'}")
 
     application_dir = _application_dir
     project_root = os.path.dirname(application_dir)

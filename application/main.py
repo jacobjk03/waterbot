@@ -22,7 +22,7 @@ from sources_verifier import should_show_sources
 from managers.pgvector_store import PgVectorStore
 from managers.s3_manager import S3Manager
 
-from adapters.openai import OpenAIAdapter
+from adapters.claude import ClaudeAdapter
 from adapters.bedrock_kb import BedrockKnowledgeBase
 from starlette.middleware.sessions import SessionMiddleware
 from langdetect import detect, DetectorFactory
@@ -232,19 +232,18 @@ app.add_middleware(SessionMiddleware, secret_key=secret_key)
 TRANSCRIPT_BUCKET_NAME=os.getenv("TRANSCRIPT_BUCKET_NAME")
 
 # adapter choices
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL") or os.getenv("ANTHROPIC_MODEL") or "claude-sonnet-4-6"
 ADAPTERS: dict[str, object] = {
-    "openai-gpt4.1": OpenAIAdapter("gpt-4.1"),
+    "claude-default": ClaudeAdapter(CLAUDE_MODEL),
 }
 
 # Set adapter choice
-llm_adapter = ADAPTERS["openai-gpt4.1"]
+llm_adapter = ADAPTERS["claude-default"]
 
 # If AWS_KB_ID is set, we will route RAG to Bedrock KB instead of pgvector
 AWS_KB_ID = os.getenv("AWS_KB_ID") or os.getenv("BEDROCK_KB_ID")
 AWS_REGION = os.getenv("AWS_REGION") or "us-west-2"
 AWS_KB_MODEL_ARN = os.getenv("AWS_KB_MODEL_ARN")
-
-embeddings = llm_adapter.get_embeddings()
 
 # Manager classes
 memory = MemoryManager()  # Assuming you have a MemoryManager class
@@ -373,9 +372,11 @@ def get_vector_store_or_kb():
         raise ValueError(
             "RAG requires PostgreSQL: set DATABASE_URL (RAG-only) or DB_HOST, DB_USER, DB_PASSWORD, DB_NAME."
         )
+    # Only initialize embeddings if we actually need pgvector.
+    embedding_function = llm_adapter.get_embeddings()
     if DATABASE_URL:
-        return PgVectorStore(db_url=DATABASE_URL, embedding_function=embeddings)
-    return PgVectorStore(db_params=DB_PARAMS, embedding_function=embeddings)
+        return PgVectorStore(db_url=DATABASE_URL, embedding_function=embedding_function)
+    return PgVectorStore(db_params=DB_PARAMS, embedding_function=embedding_function)
 
 
 # Ensure rag_chunks table exists only when using pgvector

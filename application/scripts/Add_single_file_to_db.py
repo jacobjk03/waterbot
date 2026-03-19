@@ -1,6 +1,6 @@
 """
 Add a single file to the pgvector RAG store. For batch ingestion use Add_files_to_db.py.
-Requires DB_HOST, DB_USER, DB_PASSWORD, DB_NAME and OPENAI_API_KEY.
+Requires DB_HOST, DB_USER, DB_PASSWORD, DB_NAME and OPENAI_API_KEY for embeddings.
 """
 import os
 import re

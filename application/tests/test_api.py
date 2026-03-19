@@ -1,7 +1,7 @@
 """
 Backend API tests for WaterBot (FastAPI).
 
-All external I/O (OpenAI, Bedrock, PostgreSQL) is mocked via conftest.py.
+All external I/O (Claude, Bedrock, PostgreSQL) is mocked via conftest.py.
 Run with:  pytest application/tests/ -v
 """
 import pytest

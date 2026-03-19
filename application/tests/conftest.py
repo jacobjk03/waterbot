@@ -2,7 +2,7 @@
 Pytest fixtures for WaterBot API tests.
 
 Installs against the real requirements.txt dependencies; external I/O
-(OpenAI, Bedrock, PostgreSQL) is prevented by env var config and by
+(Claude, Bedrock, PostgreSQL) is prevented by env var config and by
 overriding the module-level singletons after import.
 
 POSTGRES_ENABLED is False (no DB env vars) → psycopg2.connect is never called.
@@ -19,7 +19,7 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 # Ensure env vars are set before main.py is imported
-os.environ.setdefault("OPENAI_API_KEY", "test-key-not-real")
+os.environ.setdefault("CLAUDE_API_KEY", "test-key-not-real")
 os.environ.setdefault("AWS_KB_ID", "test-kb-id")
 os.environ.setdefault("AWS_DEFAULT_REGION", "us-west-2")
 # No DATABASE_URL / DB_HOST → POSTGRES_ENABLED=False → psycopg2.connect never called

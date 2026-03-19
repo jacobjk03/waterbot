@@ -5,6 +5,7 @@ psycopg[binary]
 pgvector
 langchain-aws>=1.0.0
 openai
+anthropic
 fastapi
 itsdangerous
 boto3
