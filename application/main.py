@@ -1289,7 +1289,7 @@ async def riverbot_chat_api_post(request: Request, user_query: Annotated[str, Fo
         chat_history=await memory.get_session_history_all(session_uuid), 
         kb_data=doc_content_str,
         temperature=.5,
-        max_tokens=500,
+        max_tokens=1024,
         endpoint_type="riverbot" )
 
     response_content = await llm_adapter.generate_response(llm_body=llm_body)
