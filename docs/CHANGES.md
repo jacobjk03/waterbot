@@ -55,7 +55,7 @@ CDK fully controls the ECS task definition on every deploy. Any environment vari
 in the AWS console or directly on the ECS service will be **overwritten the next time CDK deploys**.
 
 This means:
-- `OPENAI_API_KEY`, `BASIC_AUTH_SECRET`, and `DB_PASSWORD` must be in **Secrets Manager** (injected
+- `CLAUDE_API_KEY`, `BASIC_AUTH_SECRET`, and `DB_PASSWORD` must be in **Secrets Manager** (injected
   via `secrets=` in CDK) — not set manually on the service.
 - `AWS_KB_ID`, `AWS_REGION`, and other non-secret config must be in the `environment=` dict in
   `app_stack.py`.
@@ -128,7 +128,7 @@ CloudFront invalidation step, leaving the old cached site live. Added as an inli
 
 | What | Why |
 |------|-----|
-| `application/adapters/claude.py` (file deleted) | `BedrockClaudeAdapter` was never used — the active adapter is `OpenAIAdapter("gpt-4.1")`. |
+| `application/adapters/claude.py` (file deleted) | `BedrockClaudeAdapter` was never used — the active adapter is `ClaudeAdapter(...)`. |
 | Claude import + `ADAPTERS` registration in `main.py` | Same as above. |
 | Amazon Transcribe imports in `main.py` | The frontend uses the browser's native `SpeechRecognition` / `webkitSpeechRecognition` API for voice input. AWS Transcribe was never called from the frontend. |
 | `MyEventHandler` class in `main.py` | Only used by the `/transcribe` endpoint. |

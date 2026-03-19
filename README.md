@@ -111,7 +111,7 @@ flowchart TD
 - Python 3.11+
 - Node.js 18+
 - AWS credentials with `bedrock:Retrieve` + `bedrock:RetrieveAndGenerate` on KB `Z2NHZ8JMMQ` in `us-west-2`
-- OpenAI API key
+- Claude API key
 
 ### Step 1 — Create `application/.env`
 
@@ -123,8 +123,8 @@ Then fill in:
 
 ```env
 # ── Required ────────────────────────────────────────────
-# LLM (used for chat, safety checks, and embeddings)
-OPENAI_API_KEY=sk-...
+# LLM (used for chat + source verification)
+CLAUDE_API_KEY=sk-...
 
 # RAG via AWS Bedrock Knowledge Base
 AWS_KB_ID=Z2NHZ8JMMQ
@@ -180,7 +180,7 @@ Vite proxies all `/chat_api`, `/chat_sources_api`, `/submit_rating_api`, `/sessi
 
 | Feature | Required vars |
 |---------|--------------|
-| RAG + chat | `OPENAI_API_KEY`, `AWS_KB_ID`, `AWS_REGION`, AWS creds |
+| RAG + chat | `CLAUDE_API_KEY`, `AWS_KB_ID`, `AWS_REGION`, AWS creds |
 | Message logging | `DATABASE_URL` or `DB_*` |
 | Ratings | `MESSAGES_TABLE` |
 | Transcript download | `TRANSCRIPT_BUCKET_NAME` |
@@ -196,7 +196,7 @@ docker-compose up           # builds image, runs on http://localhost:8000
 ./docker_run.sh
 ```
 
-The `docker-compose.yml` reads `OPENAI_API_KEY`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `TRANSCRIPT_BUCKET_NAME`, and `MESSAGES_TABLE` from your shell environment.
+The `docker-compose.yml` reads `CLAUDE_API_KEY`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `TRANSCRIPT_BUCKET_NAME`, and `MESSAGES_TABLE` from your shell environment.
 
 ---
 
@@ -208,7 +208,7 @@ waterbot/
 │   ├── main.py                   # App entry point: all 13 endpoints, middleware, startup
 │   ├── adapters/
 │   │   ├── base.py               # ModelAdapter abstract base class
-│   │   ├── openai.py             # OpenAIAdapter (GPT-4.1, moderation, embeddings)
+│   │   ├── claude.py            # ClaudeAdapter (Claude chat + source verification)
 │   │   └── bedrock_kb.py         # BedrockKnowledgeBase (Retrieve + RetrieveAndGenerate)
 │   ├── managers/
 │   │   ├── memory_manager.py     # In-memory session state (chat history, message counts)
@@ -354,7 +354,9 @@ AWS_DEFAULT_REGION=us-east-1 cdk deploy --context env=dev
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `OPENAI_API_KEY` | Yes | OpenAI API key (chat, moderation, embeddings) |
+| `CLAUDE_API_KEY` | Yes | Claude (Anthropic) API key (chat + source verification) |
+| `CLAUDE_MODEL` | No | Main chat model (defaults to `claude-sonnet-4-6`) |
+| `SOURCES_VERIFIER_MODEL` | No | Sources YES/NO classifier model (defaults to `claude-sonnet-4-6`) |
 | `AWS_KB_ID` | Yes | Bedrock Knowledge Base ID (`Z2NHZ8JMMQ`) |
 | `AWS_REGION` | Yes | Bedrock KB region (`us-west-2`) |
 | `AWS_ACCESS_KEY_ID` | Yes* | AWS credential (*or use `AWS_PROFILE` / instance role) |
@@ -369,15 +371,15 @@ AWS_DEFAULT_REGION=us-east-1 cdk deploy --context env=dev
 
 ### LLM Adapter
 
-The current default is `OpenAIAdapter("gpt-4.1")` set in `main.py`. To swap adapters, modify:
+The current default is `ClaudeAdapter(...)` set in `main.py`. To swap adapters, modify:
 
 ```python
 # application/main.py
 ADAPTERS: dict[str, object] = {
-    "openai-gpt4.1": OpenAIAdapter("gpt-4.1"),
+    "claude-default": ClaudeAdapter(CLAUDE_MODEL),
     # "bedrock-kb": BedrockKnowledgeBase(kb_id=AWS_KB_ID),
 }
-llm_adapter = ADAPTERS["openai-gpt4.1"]
+llm_adapter = ADAPTERS["claude-default"]
 ```
 
 ---

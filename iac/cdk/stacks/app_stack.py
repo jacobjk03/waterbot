@@ -83,9 +83,9 @@ class AppStack(Stack):
         context_value = self.node.try_get_context("env")
 
         # Get the secret value from an environment variable
-        secret_value = os.environ.get("OPENAI_API_KEY")
+        secret_value = os.environ.get("CLAUDE_API_KEY")
         if not secret_value:
-            raise ValueError("OPENAI_API_KEY environment variable is not set")
+            raise ValueError("CLAUDE_API_KEY environment variable is not set")
         
         # Get the secret value from an environment variable
         secret_header_value = os.environ.get("SECRET_HEADER_KEY")
@@ -369,8 +369,8 @@ class AppStack(Stack):
         # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! #
         # Create a Secrets Manager secret
         secret = secretsmanager.Secret(
-            self, "OpenAI-APIKey",
-            description="Open API Key",
+            self, "Claude-APIKey",
+            description="Claude (Anthropic) API Key",
             secret_string_value=SecretValue.unsafe_plain_text(secret_value)
         )
 
@@ -468,7 +468,7 @@ class AppStack(Stack):
                 "AWS_REGION": "us-west-2",
             },
             secrets={
-                "OPENAI_API_KEY": ecs.Secret.from_secrets_manager(secret),
+                "CLAUDE_API_KEY": ecs.Secret.from_secrets_manager(secret),
                 # PostgreSQL password (NEW) ✅
                 "DB_PASSWORD": ecs.Secret.from_secrets_manager(
                     db_credentials_secret,

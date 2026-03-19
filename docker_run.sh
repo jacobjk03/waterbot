@@ -23,9 +23,9 @@ if [ -z "$AWS_SESSION_TOKEN" ]; then
     exit 1
 fi
 
-# Check if OPENAI_API_KEY is set
-if [ -z "$OPENAI_API_KEY" ]; then
-    echo "OPENAI_API_KEY is not set"
+# Check if CLAUDE_API_KEY is set
+if [ -z "$CLAUDE_API_KEY" ]; then
+    echo "CLAUDE_API_KEY is not set"
     exit 1
 fi
 
@@ -41,6 +41,6 @@ docker run -e AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
            -e AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
            -e AWS_SESSION_TOKEN="$AWS_SESSION_TOKEN" \
            -e AWS_DEFAULT_REGION="$AWS_DEFAULT_REGION" \
-           -e OPENAI_API_KEY="$OPENAI_API_KEY" \
+           -e CLAUDE_API_KEY="$CLAUDE_API_KEY" \
            -e MESSAGES_TABLE="$MESSAGES_TABLE" \
            -p 8000:8000 waterbot

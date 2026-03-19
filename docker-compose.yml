@@ -3,7 +3,7 @@ services:
     build:
       context: .
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}  # Pass the key from your local environment
+      - CLAUDE_API_KEY=${CLAUDE_API_KEY}  # Pass the key from your local environment
       - AWS_DEFAULT_REGION=us-east-1 
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}   # Pass AWS access key ID from environment
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}   # Pass AWS secret access key from environment

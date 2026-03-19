@@ -51,10 +51,11 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     fi
 fi
 
-# RAG vector store is PostgreSQL (pgvector). Ingest with Add_files_to_db.py when DB_* and OPENAI_API_KEY are set.
+# RAG vector store is PostgreSQL (pgvector).
+# Chat generation uses Claude; embeddings ingestion may still require OpenAI depending on your setup.
 echo "✅ Frontend will be built inside Docker (OS-agnostic)"
 
-# Load environment variables from .env file if it exists (for OPENAI_API_KEY in container)
+# Load environment variables from .env file if it exists (for CLAUDE_API_KEY in container)
 if [ -f ".env" ]; then
     echo "📄 Loading environment variables from .env file..."
     export $(grep -v '^#' .env | xargs)
@@ -63,11 +64,11 @@ elif [ -f "application/.env" ]; then
     export $(grep -v '^#' application/.env | xargs)
 fi
 
-# Build arguments (optional - only if OPENAI_API_KEY is set)
+# Build arguments (optional - only if CLAUDE_API_KEY is set)
 BUILD_ARGS=""
-if [ -n "$OPENAI_API_KEY" ]; then
-    BUILD_ARGS="--build-arg OPENAI_API_KEY=$OPENAI_API_KEY"
-    echo "✅ OPENAI_API_KEY will be available in container"
+if [ -n "$CLAUDE_API_KEY" ]; then
+    BUILD_ARGS="--build-arg CLAUDE_API_KEY=$CLAUDE_API_KEY"
+    echo "✅ CLAUDE_API_KEY will be available in container"
 fi
 
 # Build the image
